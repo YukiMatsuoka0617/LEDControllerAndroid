@@ -2,6 +2,7 @@ package com.example.arduinocontroller;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,26 +17,23 @@ import java.net.Socket;
 public class MainActivity extends AppCompatActivity
         implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
-    final int BUTTON_NUM = 8;
+    Button[] buttons = new Button[8];
     final int[] BUTTON_IDS = {R.id.button_connect,R.id.button_disconnect,R.id.button_red,R.id.button_green,R.id.button_blue,R.id.button_gaming,R.id.button_wave,R.id.button_warm};
-    Button[] buttons = new Button[BUTTON_NUM];
 
     SeekBar[] seekBars = new SeekBar[3];
     final int[] SEEKBAR_IDS = {R.id.seekBar_red,R.id.seekBar_green,R.id.seekBar_blue};
 
     private final static String IP="192.168.1.17";
     private final static int PORT=80;
-//    private final static String IP="192.168.1.14";
-//    private final static int PORT=8080;
+
     private Socket socket;
     private OutputStream out;
 
     int seekBarMax = 255;
     int red,green,blue = seekBarMax;
-    int mode = 0;
 
-    TextView[] textViews = new TextView[3];
-    final int[] TEXTVIEW_IDS = {R.id.textView_red,R.id.textView_green,R.id.textView_blue};
+    TextView[] textViews = new TextView[4];
+    final int[] TEXTVIEW_IDS = {R.id.textView_red,R.id.textView_green,R.id.textView_blue,R.id.textView2};
 
 
     @Override
@@ -43,7 +41,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        for (int i = 0; i < BUTTON_NUM; i++) {
+        for (int i = 0; i < BUTTON_IDS.length; i++) {
             buttons[i] = findViewById(BUTTON_IDS[i]);
             buttons[i].setOnClickListener(this);
         }
@@ -57,7 +55,6 @@ public class MainActivity extends AppCompatActivity
 
         for (int i = 0; i < TEXTVIEW_IDS.length; i++) {
             textViews[i] = findViewById(TEXTVIEW_IDS[i]);
-            textViews[i].setOnClickListener(this);
         }
 
     }
@@ -95,8 +92,12 @@ public class MainActivity extends AppCompatActivity
             socket = new Socket(ip, port);
             if (socket.isConnected() && socket != null) {
                 out = socket.getOutputStream();
+                textViews[3].setText("接続成功");
+                textViews[3].setTextColor(Color.BLUE);
                 Log.d("test", "接続成功");
             } else {
+                textViews[3].setText("接続失敗");
+                textViews[3].setTextColor(Color.RED);
                 Log.d("test", "接続失敗");
             }
         } catch (Exception e) {
