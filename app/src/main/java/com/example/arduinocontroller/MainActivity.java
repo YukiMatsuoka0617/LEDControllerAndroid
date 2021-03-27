@@ -17,36 +17,44 @@ import java.net.Socket;
 public class MainActivity extends AppCompatActivity
         implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
-    Button[] buttons = new Button[8];
-    final int[] BUTTON_IDS = {R.id.button_connect,R.id.button_disconnect,R.id.button_red,R.id.button_green,R.id.button_blue,R.id.button_gaming,R.id.button_wave,R.id.button_warm};
+    Button[] buttons;
+    final int[] BUTTON_IDS =
+            {R.id.button_connect, R.id.button_disconnect,
+            R.id.button_red, R.id.button_green, R.id.button_blue,
+            R.id.button_cyan, R.id.button_magenta, R.id.button_yellow,
+            R.id.button_gaming, R.id.button_wave, R.id.button_warm};
 
-    SeekBar[] seekBars = new SeekBar[3];
-    final int[] SEEKBAR_IDS = {R.id.seekBar_red,R.id.seekBar_green,R.id.seekBar_blue};
+    SeekBar[] seekBars;
+    final int[] SEEKBAR_IDS = {R.id.seekBar_red, R.id.seekBar_green, R.id.seekBar_blue};
 
-    private final static String IP="192.168.1.17";
-    private final static int PORT=80;
+    TextView[] textViews;
+    final int[] TEXTVIEW_IDS =
+            {R.id.textView_red, R.id.textView_green, R.id.textView_blue, R.id.textView2};
+
+    private final static String IP = "192.168.1.17";
+    private final static int PORT = 80;
 
     private Socket socket;
     private OutputStream out;
 
     int seekBarMax = 255;
-    int red,green,blue = seekBarMax;
-
-    TextView[] textViews = new TextView[4];
-    final int[] TEXTVIEW_IDS = {R.id.textView_red,R.id.textView_green,R.id.textView_blue,R.id.textView2};
-
+    int red, green, blue = seekBarMax;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        buttons = new Button[BUTTON_IDS.length];
+        seekBars = new SeekBar[SEEKBAR_IDS.length];
+        textViews = new TextView[TEXTVIEW_IDS.length];
+
         for (int i = 0; i < BUTTON_IDS.length; i++) {
             buttons[i] = findViewById(BUTTON_IDS[i]);
             buttons[i].setOnClickListener(this);
         }
 
-        for(int i = 0; i<SEEKBAR_IDS.length;i++){
+        for (int i = 0; i < SEEKBAR_IDS.length; i++) {
             seekBars[i] = findViewById(SEEKBAR_IDS[i]);
             seekBars[i].setMax(seekBarMax);
             seekBars[i].setProgress(seekBarMax);
@@ -60,13 +68,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
-        Thread thread = new Thread(){
-            public void run(){
-                try{
-                    connect(IP, PORT);		//resume時にソケットを開く
-                }catch(Exception e){
+        Thread thread = new Thread() {
+            public void run() {
+                try {
+                    connect(IP, PORT);        //resume時にソケットを開く
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -77,15 +85,15 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onPause() {
         super.onPause();
-        try{
+        try {
             socket.close();
-            socket=null;
-        }catch(Exception e){
+            socket = null;
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void connect(String ip,int port) {
+    private void connect(String ip, int port) {
         Log.d("test", "connect start");
         try {
             //ソケット接続
@@ -107,31 +115,43 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.button_red:
-                sendData(0,255, 0, 0);
+                sendData(0, 255, 0, 0);
 //                setSeekBar(seekBarMax, 0, 0);
                 break;
             case R.id.button_green:
-                sendData(0,0, 255, 0);
+                sendData(0, 0, 255, 0);
 //                setSeekBar(0, seekBarMax, 0);
                 break;
             case R.id.button_blue:
-                sendData(0,0, 0, 255);
+                sendData(0, 0, 0, 255);
 //                setSeekBar(0, 0, seekBarMax);
                 break;
+            case R.id.button_cyan:
+                sendData(0, 0, 255, 255);
+//                setSeekBar(0, seekBarMax, seekBarMax);
+                break;
+            case R.id.button_magenta:
+                sendData(0, 255, 0, 255);
+//                setSeekBar(seekBarMax, 0, seekBarMax);
+                break;
+            case R.id.button_yellow:
+                sendData(0, 255, 255, 0);
+//                setSeekBar(seekBarMax, seekBarMax, 0);
+                break;
             case R.id.button_gaming:
-                sendData(1,1, 0, 0);
+                sendData(1, 1, 0, 0);
 //                setSeekBar(0, 0, seekBarMax);
                 break;
             case R.id.button_wave:
-                sendData(1,0, 1, 0);
+                sendData(1, 0, 1, 0);
 //                setSeekBar(0, 0, seekBarMax);
                 break;
             case R.id.button_warm:
-            sendData(1,0, 0, 1);
+                sendData(1, 0, 0, 1);
 //                setSeekBar(0, 0, seekBarMax);
-            break;
+                break;
         }
     }
 
